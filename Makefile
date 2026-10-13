@@ -11,7 +11,9 @@
 CURL := curl --proto '=https' --tlsv1.2 -LsSf
 FONT_URL := \
 	https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/install.sh
-NIX_FLAGS := --extra-experimental-features 'nix-command flakes'
+# Quoted for the shell: make expands variables without quote protection,
+# so the space-carrying feature list must arrive as one shell word.
+NIX_FLAGS := --extra-experimental-features "nix-command flakes"
 PACKAGE_MGR := sudo apt install
 
 # True OS-level bootstrap deps; everything else comes from the flake.
@@ -24,21 +26,25 @@ ESC := \033
 BOLD := $(ESC)[1m
 GREEN := $(ESC)[32m
 RED := $(ESC)[31m
+YELLOW := $(ESC)[33m
 RESET := $(ESC)[0m
 
 # Output helpers, used as $(call helper, text):
 #   banner <n> <text>  step header, e.g. "==> [2/3] ..."
 #   ok <text>          green check, printed after a step succeeded
 #   fail <text>        red cross, printed right before `exit 1`
+#   warn <text>        yellow triangle, advisory note (tips target)
+# text may not contain commas (make call argument separator).
 # Every real command in a recipe ends with an explicit failure branch:
 #   @cmd || { $(call fail, what went wrong); exit 1; }
 # so a broken run names the step that died instead of aborting silently.
 banner = @printf "$(BOLD)==> $(1)/3] $(2)$(RESET)\n"
 ok = @printf "  $(GREEN)✓ $(1)$(RESET)\n"
 fail = printf "  $(RED)✗ $(1)$(RESET)\n"
+warn = @printf "  $(YELLOW)▲ $(1)$(RESET)\n"
 
 # --- Target -----------------------------------------------------------------
-.PHONY: help install install-deps install-nix install-dotfiles
+.PHONY: help install install-deps install-nix install-dotfiles tips
 
 help:
 	@echo "dotfiles bootstrap — targets:"
@@ -46,6 +52,7 @@ help:
 	@echo "  install-deps        OS deps (stow) + Nerd Fonts"
 	@echo "  install-nix         nix + flake tool set"
 	@echo "  install-dotfiles    submodules, stow, local seed"
+	@echo "  tips                post-install advisory notes (runs after install)"
 	@echo "  help                this list (default goal)"
 
 install-deps:
@@ -77,9 +84,15 @@ install-nix:
 			|| { $(call fail,nix installer failed); exit 1; } \
 		&& printf "  $(GREEN)✓ nix installed (multi-user, daemon)$(RESET)\n"; \
 	fi
-	@nix $(NIX_FLAGS) profile add . \
-		|| { $(call fail,flake tool set install failed); exit 1; }
-	$(call ok,flake tool set installed via nix profile)
+	@if nix $(NIX_FLAGS) profile list | grep -qF "$$(basename "$$PWD")"; then \
+		nix $(NIX_FLAGS) profile upgrade "$$(basename "$$PWD")" \
+			|| { $(call fail,flake tool set upgrade failed); exit 1; } \
+		&& printf "  $(GREEN)✓ flake tool set upgraded$(RESET)\n"; \
+	else \
+		nix $(NIX_FLAGS) profile add . \
+			|| { $(call fail,flake tool set install failed); exit 1; } \
+		&& printf "  $(GREEN)✓ flake tool set installed via nix profile$(RESET)\n"; \
+	fi
 
 install-dotfiles:
 	$(call banner,3,Dotfiles (stow) + local seed)
@@ -92,11 +105,21 @@ install-dotfiles:
 	@cd config && stow * \
 		|| { $(call fail,stow failed); exit 1; }
 	$(call ok,all packages stowed into ~/)
-	@cp -n ~/.config/zsh/.zshrc_local.example ~/.config/zsh/.zshrc_local \
+	@cp --update=none ~/.config/zsh/.zshrc_local.example ~/.config/zsh/.zshrc_local \
 		|| { $(call fail,.zshrc_local seed failed); exit 1; }
 	$(call ok,.zshrc_local seeded (only if missing))
 
-install: install-deps install-nix install-dotfiles
+# --- Tips ----------------------------------------------------------------------
+# Advisory notes, printed at the end of `install`. Each is guarded so
+# re-runs stay quiet. New tips go here.
+HISTORY_TIP := old shell history at ~/.zsh_history — one-time: atuin import zsh
+
+tips:
+	@if [ -s "$$HOME/.zsh_history" ]; then \
+		printf "  $(YELLOW)▲ $(HISTORY_TIP)$(RESET)\n"; \
+	fi
+
+install: install-deps install-nix install-dotfiles tips
 	@echo ""
 	@printf "$(GREEN)✓ dotfiles bootstrap complete — open a new \
 	shell to apply.$(RESET)\n"
