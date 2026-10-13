@@ -1,0 +1,22 @@
+# ============================================================================
+# .zshrc_local.example — TEMPLATE for .zshrc_local.
+#
+# `make install` copies this to .zshrc_local (only if the latter does not
+# exist yet). Edit .zshrc_local freely — it is gitignored and never
+# overwritten. Keep machine-specific stuff here; shared stuff belongs in
+# the other *.zsh files.
+# ============================================================================
+
+## --- Personal aliases ------------------------------------------------------------------
+alias task="taskell ~/Seafile/My_Library/taskell.md"
+alias today="vim ~/Documents/done.md"
+
+## --- md: render a markdown file and open it in the browser --------------------------------
+md() {
+    pandoc "$1" > "/tmp/$1.html"
+    xdg-open "/tmp/$1.html"
+}
+
+## --- Personal bindings -----------------------------------------------------------------------------
+# Preferred autosuggest-execute key.
+bindkey '^o' autosuggest-execute
