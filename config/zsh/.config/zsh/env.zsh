@@ -54,3 +54,21 @@ export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 export PATH="/usr/local/go/bin:$GOPATH/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.opencode/bin:$PATH"  # opencode agent
+
+## --- Nix
+# User-level config dir (stowed nix/nix.conf).
+export NIX_CONF_DIR="$XDG_CONFIG_HOME/nix"
+# Multi-user setup: nix-daemon.sh puts the system nix profile on PATH
+# (this is where the nix binary itself lives).
+if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+    source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+# Per-user nix profile: where `nix profile add` installs tools (the
+# dotfiles flake). Prepend so these win over distro packages.
+if [[ -e "$HOME/.nix-profile/bin" ]]; then
+    export PATH="$HOME/.nix-profile/bin:$PATH"
+fi
+# System-wide nix profile; only non-empty on NixOS or nix-env installs.
+if [[ -d /nix/var/nix/profiles/default/bin ]]; then
+    export PATH="/nix/var/nix/profiles/default/bin:$PATH"
+fi

@@ -9,9 +9,7 @@
 # ============================================================================
 
 ## --- Atuin: synced, searchable shell history
-# The installer drops a bin/env file that puts atuin's shims on PATH;
-# it must be loaded before `atuin init`.
-[[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
+# atuin comes from the nix profile (on PATH via env.zsh).
 # `--disable-up-arrow`: plain up-arrow stays native history search;
 # atuin search is invoked explicitly (see bindings.zsh for key bindings).
 eval "$(atuin init zsh --disable-up-arrow)"
@@ -37,24 +35,6 @@ zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
 ## --- zsh-autosuggestions (git submodule next to this file)
 source "$ZSHRC_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-## --- Nix
-# User-level config dir (stowed nix/nix.conf).
-export NIX_CONF_DIR="$XDG_CONFIG_HOME/nix"
-# Multi-user setup: nix-daemon.sh puts the system nix profile on PATH
-# (this is where the nix binary itself lives).
-if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-    source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-fi
-# Per-user nix profile: where `nix profile add` installs tools (the
-# dotfiles flake). Prepend so these win over distro packages.
-if [[ -e "$HOME/.nix-profile/bin" ]]; then
-    export PATH="$HOME/.nix-profile/bin:$PATH"
-fi
-# System-wide nix profile; only non-empty on NixOS or nix-env installs.
-if [[ -d /nix/var/nix/profiles/default/bin ]]; then
-    export PATH="/nix/var/nix/profiles/default/bin:$PATH"
-fi
 
 ## --- direnv: .envrc-managed environment per directory
 eval "$(direnv hook zsh)"
