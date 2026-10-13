@@ -11,13 +11,13 @@ make install
 
 `make install` runs, in order:
 
-1. `install-deps` — `stow` + Nerd Fonts
+1. `install-deps` — Nerd Fonts (curl installer)
 2. `install-nix` — nix then the tool set from `flake.nix` via
    `nix profile add .`
-3. `install-dotfiles` — submodules, `stow -R`, and a
+3. `install-dotfiles` — submodules, `stow`, and a
    `.zshrc_local` seed
 
-Everything tool-like comes from the flake.
+Everything tool-like — including stow itself — comes from the flake.
 
 ## Layout
 
@@ -33,8 +33,8 @@ package dir from the link path and creates intermediate dirs, so
 config/zsh/.zshrc                -> ~/.zshrc
 config/zsh/.config/zsh/*.zsh     -> ~/.config/zsh/*.zsh
 config/starship/.config/…        -> ~/.config/starship/…
-config/tmux/.tmux.conf           -> ~/.tmux.conf
+config/ghostty/.config/…         -> ~/.config/ghostty/…
 ```
 
-The Makefile runs `stow -R` (every top-level dir is a package) and
+The Makefile runs `stow *` (every top-level dir is a package) and
 seeds `.zshrc_local`.

@@ -25,6 +25,7 @@
           resvg
           ripgrep
           starship
+          stow
           tree
           xclip
           yazi

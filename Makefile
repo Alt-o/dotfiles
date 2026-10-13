@@ -1,8 +1,8 @@
 # ============================================================================
 # dotfiles — bootstrap Makefile.
 #
-# Installs the true OS-level deps, sets up nix + the tool set from
-# flake.nix, then distributes the dotfiles with stow.
+# Sets up nix + the tool set from flake.nix (which includes stow
+# itself), then distributes the dotfiles with stow. No apt anywhere.
 #
 # ============================================================================
 
@@ -14,12 +14,10 @@ FONT_URL := \
 # Quoted for the shell: make expands variables without quote protection,
 # so the space-carrying feature list must arrive as one shell word.
 NIX_FLAGS := --extra-experimental-features "nix-command flakes"
-PACKAGE_MGR := sudo apt install
-
-# True OS-level bootstrap deps; everything else comes from the flake.
-PACKAGES :=
-PACKAGES += curl
-PACKAGES += stow
+# stow ships in the flake profile. Prepend the profile bin to PATH so it
+# is found even in non-interactive make shells where the nix PATH hook
+# (the zshrc env block) has not run.
+STOW := env PATH="$HOME/.nix-profile/bin:$$PATH" stow
 
 # --- Output -----------------------------------------------------------------
 ESC := \033
@@ -48,22 +46,15 @@ warn = @printf "  $(YELLOW)▲ $(1)$(RESET)\n"
 
 help:
 	@echo "dotfiles bootstrap — targets:"
-	@echo "  install             full bootstrap (deps -> nix -> dotfiles)"
-	@echo "  install-deps        OS deps (stow) + Nerd Fonts"
-	@echo "  install-nix         nix + flake tool set"
+	@echo "  install             full bootstrap (fonts -> nix -> dotfiles)"
+	@echo "  install-deps        Nerd Fonts (curl installer)"
+	@echo "  install-nix         nix + flake tool set (includes stow)"
 	@echo "  install-dotfiles    submodules, stow, local seed"
 	@echo "  tips                post-install advisory notes (runs after install)"
 	@echo "  help                this list (default goal)"
 
 install-deps:
-	$(call banner,1,OS packages + Nerd Fonts)
-	@if command -v curl >/dev/null && command -v stow >/dev/null; then \
-		echo "  OS packages already installed — skipping"; \
-	else \
-		$(PACKAGE_MGR) $(PACKAGES) \
-			|| { $(call fail,OS packages install failed); exit 1; } \
-		&& printf "  $(GREEN)✓ OS packages installed (%s)$(RESET)\n" "$(PACKAGES)"; \
-	fi
+	$(call banner,1,Nerd Fonts)
 	@$(CURL) $(FONT_URL) -o /tmp/nerd-fonts.sh && chmod u+x /tmp/nerd-fonts.sh \
 		|| { $(call fail,Nerd Fonts installer download failed); exit 1; }
 	@if [ -d ~/.local/share/fonts/NerdFonts ] && \
@@ -102,7 +93,7 @@ install-dotfiles:
 	@if [ -e ~/.zshrc ] && [ ! -L ~/.zshrc ]; then \
 		mv ~/.zshrc ~/.zshrc.backup; \
 		echo "  backed up existing ~/.zshrc to ~/.zshrc.backup"; fi
-	@cd config && stow * \
+	@cd config && $(STOW) * \
 		|| { $(call fail,stow failed); exit 1; }
 	$(call ok,all packages stowed into ~/)
 	@cp --update=none ~/.config/zsh/.zshrc_local.example ~/.config/zsh/.zshrc_local \
