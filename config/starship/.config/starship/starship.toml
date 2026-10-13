@@ -1,0 +1,61 @@
+# ============================================================================
+# starship.toml — cross-shell prompt.
+#
+# Design: minimal left prompt (path, git, arrow — what you glance at while
+# typing), everything else on the right.
+#
+# Docs: https://starship.rs/config/
+# ============================================================================
+
+add_newline = false
+palette = "dracula"
+
+# Prompt budget: keep rendering fast on big/synced trees (Seafile,
+# large checkouts). Starship skips env detection after scan_timeout
+# and aborts individual commands after command_timeout (milliseconds).
+scan_timeout = 2000
+command_timeout = 1000
+
+# Left: path, git branch + status, arrow.
+format = "$directory$git_branch$git_status$character"
+
+# Right: everything else. Starship has no "all except" — the right side
+# must list its modules explicitly (add more language versions here as
+# you adopt them). $status renders only after a failed command (exit
+# code), $time anchors the right side.
+right_format = """$python $nodejs $golang $rust $cmd_duration $line_number
+$time $status"""
+
+[character]
+success_symbol = "[➜](bold green) "
+error_symbol = "[✗](bold red) "
+
+# Compact git branch: no remote, no "on " prefix; dirty/staged state is
+# carried by git_status right after it.
+[git_branch]
+format = "[$symbol$branch]($style)"
+
+# Both disabled by default in starship: opt in explicitly. time shows a
+# compact HH:MM clock; status shows the exit code after a failure
+# (the ✗ on the left says "failed", this says "how badly").
+[time]
+disabled = false
+format = "[$time]($style)"
+time_format = "%H:%M"
+
+[status]
+disabled = false
+symbol = ""  # bare code, e.g. "127"; the ✗ marks the failure itself
+
+[palettes.dracula]
+background = "#282a36"
+comment = "#6272a4"
+current_line = "#44475a"
+cyan = "#8be9fd"
+foreground = "#f8f8f2"
+green = "#50fa7b"
+orange = "#ffb86c"
+pink = "#ff79c6"
+purple = "#bd93f9"
+red = "#ff5555"
+yellow = "#f1fa8c"
