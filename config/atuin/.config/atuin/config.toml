@@ -1,0 +1,9 @@
+# Atuin config — full reference: `atuin doctor` or https://atuin.sh
+# Only non-default settings live here; everything else is stock.
+
+# Enter executes the picked command instead of putting it on the
+# prompt for editing (Tab still edits first).
+enter_accept = true
+
+# Open search in vim-insert mode, matching the shell's vi keymaps.
+keymap_mode = "vim-insert"
