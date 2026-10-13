@@ -30,10 +30,18 @@ $time $status"""
 success_symbol = "[➜](bold green) "
 error_symbol = "[✗](bold red) "
 
-# Compact git branch: no remote, no "on " prefix; dirty/staged state is
-# carried by git_status right after it.
+# Compact git branch: no icon, no remote, no "on " prefix; dirty/staged
+# state is carried by git_status right after it.
 [git_branch]
+symbol = ''
 format = "[$symbol$branch]($style)"
+
+# Ahead/behind counts with heavy arrows (readable at small sizes):
+# ↑3 = 3 commits ahead, ↓2 = 2 behind, diverged = ↑↓9/1.
+[git_status]
+ahead = '↑${count}'
+behind = '↓${count}'
+diverged = '↑↓${ahead_count}/${behind_count}'
 
 # Both disabled by default in starship: opt in explicitly. time shows a
 # compact HH:MM clock; status shows the exit code after a failure
