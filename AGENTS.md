@@ -45,7 +45,9 @@ the flake. `make install` must stay idempotent.
 
 - The flake (`buildEnv` package `dot-tools`) is the sole owner of
   tools. The tool list lives in exactly one place: the flake.
-- `flake.lock` is always committed (pins the nixpkgs snapshot).
+- `flake.lock` is intentionally NOT committed (gitignored): the flake
+  resolves nixos-unstable to whatever is current at build time;
+  machines may run slightly different tool versions.
 - Nix PATH setup lives in `config/zsh/.config/zsh/env.zsh`.
 
 ## Style
