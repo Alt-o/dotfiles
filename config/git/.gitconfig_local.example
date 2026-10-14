@@ -1,0 +1,12 @@
+# .gitconfig_local — machine/personal git values.
+#
+# Created per host from .gitconfig_local.example by the Makefile
+# (only if missing) and included by the stowed ~/.gitconfig.
+# Never store this file in the repo.
+#
+# Machine-specific extras (sendemail, browser, ...) go here too.
+
+## --- Identity (REQUIRED)
+[user]
+    name = Your Name
+    email = you@example.com

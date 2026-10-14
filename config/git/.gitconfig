@@ -1,0 +1,120 @@
+# ============================================================================
+# .gitconfig — global git configuration (portable).
+#
+# Stowed to ~/.gitconfig (single stow target: $HOME).
+# Machine/personal values (identity, sendemail, browser) live in
+# ~/.gitconfig_local, included below and NOT stored in this repo.
+# ============================================================================
+
+## --- Per-machine values (gitignored pattern; create on each host)
+[include]
+    path = ~/.gitconfig_local
+
+## --- Core
+# editor and pager are dotfile-owned (nvim, delta from the flake).
+[core]
+    editor = nvim
+    pager = delta --side-by-side --width ${FZF_PREVIEW_COLUMNS-$COLUMNS}
+    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+## --- Behavior
+[rerere]
+    enabled = 1
+    autoupdate = 1
+[push]
+    default = simple
+[init]
+    defaultBranch = main
+[commit]
+    gpgsign = false
+
+## --- Diff / merge
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    dark = true
+    navigate = true
+    side-by-side = true
+    line-numbers = true
+[merge]
+    conflictStyle = zdiff3
+[diff]
+    tool = vimdiff
+[difftool]
+    prompt = false
+
+## --- Color
+[color]
+    ui = true
+    status = true
+    interactive = true
+    diff = true
+    branch = true
+    grep = true
+[color "branch"]
+    current = yellow bold
+    local = green bold
+    remote = cyan bold
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+[color "status"]
+    added = green bold
+    changed = yellow bold
+    untracked = red bold
+
+## --- Aliases (curated daily set; re-add any dropped one as needed)
+[alias]
+    ## basics
+    st = status
+    co = checkout
+    a = add --all
+    ai = add -i
+    c = commit
+    ca = commit -a
+    cd = commit --amend
+    d = diff
+    dc = diff --cached
+    dk = diff --check
+    dl = difftool
+    ## log / branches
+    l = log --oneline
+    lg = log --oneline --graph --decorate
+    b = branch
+    ba = branch -a
+    bd = branch -d
+    ## remotes / sync
+    f = fetch
+    fo = fetch origin
+    ps = push
+    psu = push -u
+    pl = pull
+    plu = pull -u
+    pb = pull --rebase
+    ra = remote add
+    rv = remote -v
+    rr = remote rm
+    ## merge / rebase / reset
+    m = merge
+    ma = merge --abort
+    rb = rebase
+    rbi = rebase -i
+    rba = rebase --abort
+    rbc = rebase --continue
+    re = reset
+    rh = reset HEAD
+    reh = reset --hard
+    ## stash
+    sl = stash list
+    sp = stash pop
+    sa = stash apply
+    sc = stash clear
+    ## helpers
+    ours = "!f() { git checkout --ours $@ && git add $@; }; f"
+    theirs = "!f() { git checkout --theirs $@ && git add $@; }; f"
+    flat = clone --depth 1
+    subpull = !git submodule foreach git pull --tags origin master
+    snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"

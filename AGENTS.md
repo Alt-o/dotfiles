@@ -10,6 +10,9 @@ machine-specific paths or historical notes.
   to maintain. Code must be human-readable and self-documenting:
   organized into small, well-separated blocks with comments where
   the intent is not obvious — never one dense wall of text.
+- Commit messages: imperative subject (<=72 chars, no trailing
+  dot), blank line, then the body as short bullet points — one
+  change per line. Never a dense paragraph block.
 - Never commit without explicit user approval: propose the file list
   and commit message, wait for the go-ahead.
 - Small, reviewable changes; explain what/where/why; do not add

@@ -38,3 +38,8 @@ config/ghostty/.config/…         -> ~/.config/ghostty/…
 
 The Makefile runs `stow *` (every top-level dir is a package) and
 seeds `.zshrc_local`.
+
+Machine/personal values never live in the repo: they go in
+`_local` files next to the stowed config (`~/.zshrc_local`,
+`~/.gitconfig_local`), included by the stowed file and created
+per host.

@@ -96,18 +96,34 @@ install-dotfiles:
 	@cd config && $(STOW) * \
 		|| { $(call fail,stow failed); exit 1; }
 	$(call ok,all packages stowed into ~/)
-	@cp --update=none ~/.config/zsh/.zshrc_local.example ~/.config/zsh/.zshrc_local \
+	@cp --update=none "$$PWD/config/zsh/.config/zsh/.zshrc_local.example" \
+		~/.config/zsh/.zshrc_local \
 		|| { $(call fail,.zshrc_local seed failed); exit 1; }
 	$(call ok,.zshrc_local seeded (only if missing))
+	@cp --update=none "$$PWD/config/git/.gitconfig_local.example" \
+		~/.gitconfig_local \
+		|| { $(call fail,.gitconfig_local seed failed); exit 1; }
+	$(call ok,.gitconfig_local seeded (only if missing))
 
 # --- Tips ----------------------------------------------------------------------
 # Advisory notes, printed at the end of `install`. Each is guarded so
 # re-runs stay quiet. New tips go here.
 HISTORY_TIP := old shell history at ~/.zsh_history — one-time: atuin import zsh
 
+ZSHRC_TIP := .zshrc_local is still the template — review it
+GITID_TIP := git identity still the placeholder — set user.name/email in ~/.gitconfig_local
+
 tips:
 	@if [ -s "$$HOME/.zsh_history" ]; then \
 		printf "  $(YELLOW)▲ $(HISTORY_TIP)$(RESET)\n"; \
+	fi
+	@if cmp -s "$$PWD/config/zsh/.config/zsh/.zshrc_local.example" \
+		"$$HOME/.config/zsh/.zshrc_local"; then \
+		printf "  $(YELLOW)▲ $(ZSHRC_TIP)$(RESET)\n"; \
+	fi
+	@if [ -f "$$HOME/.gitconfig_local" ] && \
+		grep -q "you@example.com" "$$HOME/.gitconfig_local"; then \
+		printf "  $(YELLOW)▲ $(GITID_TIP)$(RESET)\n"; \
 	fi
 
 install: install-deps install-nix install-dotfiles tips

@@ -17,6 +17,7 @@
           eza
           fd
           fzf
+          delta
           imagemagick
           jq
           mise
