@@ -17,10 +17,11 @@ set -o vi
 bindkey -M viins jj vi-cmd-mode
 
 ## --- Autosuggestions
-bindkey '^f' autosuggest-execute
-bindkey '^e' autosuggest-accept
 bindkey '^u' autosuggest-toggle
+bindkey '^O' autosuggest-execute
 
 ## --- Motion & history (arrow-key-free)
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
 bindkey '^L' vi-forward-word
 bindkey '^k' up-line-or-search
