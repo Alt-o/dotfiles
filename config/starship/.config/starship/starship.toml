@@ -10,8 +10,7 @@
 add_newline = false
 palette = "dracula"
 
-# Prompt budget: keep rendering fast on big/synced trees (Seafile,
-# large checkouts). Starship skips env detection after scan_timeout
+# Prompt budget: keep rendering fast on big or synced trees. Starship skips env detection after scan_timeout
 # and aborts individual commands after command_timeout (milliseconds).
 scan_timeout = 2000
 command_timeout = 1000

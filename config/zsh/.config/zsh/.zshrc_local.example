@@ -7,16 +7,14 @@
 # the other *.zsh files.
 # ============================================================================
 
-## --- Personal aliases ------------------------------------------------------------------
-alias task="taskell ~/Seafile/My_Library/taskell.md"
-alias today="vim ~/Documents/done.md"
+## --- Personal aliases
+# alias gr="git rebase -i"
+# alias reload="source ~/.zshrc && echo reloaded"
 
-## --- md: render a markdown file and open it in the browser --------------------------------
-md() {
-    pandoc "$1" > "/tmp/$1.html"
-    xdg-open "/tmp/$1.html"
-}
+## --- Personal functions
+# example() {
+#     echo "hello from $USER on $(hostname)"
+# }
 
-## --- Personal bindings -----------------------------------------------------------------------------
-# Preferred autosuggest-execute key.
-bindkey '^o' autosuggest-execute
+## --- Personal bindings
+# bindkey '^o' autosuggest-execute
