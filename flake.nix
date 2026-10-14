@@ -27,6 +27,8 @@
           ripgrep
           starship
           stow
+          television
+          tldr
           tree
           xclip
           yazi

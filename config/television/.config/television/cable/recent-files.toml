@@ -1,0 +1,10 @@
+[metadata]
+name = "recent-files"
+description = "Recently modified files"
+requirements = ["fd", "bat"]
+
+[source]
+command = ["fd -t f --changed-within 7d", "fd -H -t f --changed-within 7d", "fd -H -t f --changed-within 7d -I"]
+
+[preview]
+command = "bat -n --color=always '{}'"
