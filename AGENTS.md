@@ -18,6 +18,11 @@ machine-specific paths or historical notes.
 - Small, reviewable changes; explain what/where/why; do not add
   features the user did not ask for.
 - Update README in the same change as the behavior it describes.
+- Diagnose from official documentation and tool source/docs first.
+  Do NOT run extended live-probing, trial-and-error "hacking", or
+  reverse-engineering loops on running sessions/tools to discover
+  behavior. When a question can't be answered from the docs, say so
+  plainly rather than spending long time guessing.
 
 ## What this repo is
 

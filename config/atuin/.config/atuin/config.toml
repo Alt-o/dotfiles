@@ -5,5 +5,7 @@
 # prompt for editing (Tab still edits first).
 enter_accept = true
 
-# Open search in vim-insert mode, matching the shell's vi keymaps.
-keymap_mode = "vim-insert"
+# Open search in vim-normal mode: j/k navigate the list, Esc+i to type.
+# (vim-insert would need ctrl-n/ctrl-p to scroll, which tmux's
+# vim-tmux-navigator eats at the pane level.)
+keymap_mode = "vim-normal"
