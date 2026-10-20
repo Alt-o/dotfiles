@@ -14,9 +14,9 @@ theme = Dracula
 # Nerd font so starship/eza glyphs render.
 font-family = "JetBrainsMono Nerd Font"
 
-# Dracula green (#50fa7b) for the focused cursor; the unfocused
+# Dracula purple (#bd93f9) for the focused cursor; the unfocused
 # cursor follows the theme.
-cursor-color = 80,250,123
+cursor-color = #bd93f9
 
 ## --- Window
 # Server-side window decorations (title bar drawn by the terminal,
