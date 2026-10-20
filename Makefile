@@ -49,7 +49,7 @@ help:
 	@echo "  install             full bootstrap (fonts -> nix -> dotfiles)"
 	@echo "  install-deps        Nerd Fonts (curl installer)"
 	@echo "  install-nix         nix + flake tool set (includes stow)"
-	@echo "  install-dotfiles    submodules, stow, local seed"
+	@echo "  install-dotfiles    submodules, stow, tmux plugins, local seed"
 	@echo "  tips                post-install advisory notes (runs after install)"
 	@echo "  help                this list (default goal)"
 
@@ -96,6 +96,17 @@ install-dotfiles:
 	@cd config && $(STOW) * \
 		|| { $(call fail,stow failed); exit 1; }
 	$(call ok,all packages stowed into ~/)
+	@if [ -x ~/.config/tmux/plugins/tpm/tpm ]; then \
+		~/.config/tmux/plugins/tpm/bindings/install_plugins >/dev/null \
+			|| { $(call fail,tmux plugin install failed); exit 1; } \
+		&& printf "  $(GREEN)✓ tmux plugins installed$(RESET)\n"; \
+	else \
+		git clone --quiet https://github.com/tmux-plugins/tpm \
+			~/.config/tmux/plugins/tpm \
+			&& ~/.config/tmux/plugins/tpm/bindings/install_plugins >/dev/null \
+			|| { $(call fail,tmux plugin install failed); exit 1; } \
+		&& printf "  $(GREEN)✓ tmux plugins installed (tpm cloned)$(RESET)\n"; \
+	fi
 	@cp --update=none "$$PWD/config/zsh/.config/zsh/.zshrc_local.example" \
 		~/.config/zsh/.zshrc_local \
 		|| { $(call fail,.zshrc_local seed failed); exit 1; }

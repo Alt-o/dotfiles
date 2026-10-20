@@ -14,8 +14,8 @@ make install
 1. `install-deps` — Nerd Fonts (curl installer)
 2. `install-nix` — nix then the tool set from `flake.nix` via
    `nix profile add .`
-3. `install-dotfiles` — submodules, `stow`, and a
-   `.zshrc_local` seed
+3. `install-dotfiles` — submodules, `stow`, tmux plugins
+   (via TPM), and a `.zshrc_local` seed
 
 Everything tool-like — including stow itself — comes from the flake.
 
@@ -36,8 +36,8 @@ config/starship/.config/…        -> ~/.config/starship/…
 config/ghostty/.config/…         -> ~/.config/ghostty/…
 ```
 
-The Makefile runs `stow *` (every top-level dir is a package) and
-seeds `.zshrc_local`.
+The Makefile runs `stow *` (every top-level dir is a package),
+installs the tmux plugins with TPM, and seeds `.zshrc_local`.
 
 Machine/personal values never live in the repo: they go in
 `_local` files next to the stowed config (`~/.zshrc_local`,
