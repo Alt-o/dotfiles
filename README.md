@@ -6,16 +6,22 @@ My dotfiles synced from localhost and remote machines.
 
 ```
 git clone <this repo> && cd dotfiles
-make install
+make install        # base machine (servers too)
+make install-full   # desktop: base + GUI apps (firefox, element)
 ```
 
 `make install` runs, in order:
 
 1. `install-deps` — Nerd Fonts (curl installer)
-2. `install-nix` — nix then the tool set from `flake.nix` via
-   `nix profile add .`
+2. `install-nix` — nix then the CLI tool set from `flake.nix`
+   (`nix profile add .#cli`, includes stow)
 3. `install-dotfiles` — submodules, `stow`, tmux plugins
    (via TPM), and a `.zshrc_local` seed
+
+Desktop machines run `make install-full` (= `install` +
+`install-apps`), which additionally adds the GUI package
+(`nix profile add .#apps`). Every target is idempotent — re-running
+upgrades the corresponding profile.
 
 Everything tool-like — including stow itself — comes from the flake.
 
