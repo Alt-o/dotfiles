@@ -136,16 +136,16 @@ install-dotfiles:
 	@cd config && $(STOW) * \
 		|| { $(call fail,stow failed); exit 1; }
 	$(call ok,all packages stowed into ~/)
-	@if [ -x ~/.config/tmux/plugins/tpm/tpm ]; then \
-		~/.config/tmux/plugins/tpm/bindings/install_plugins >/dev/null \
-			|| { $(call fail,tmux plugin install failed); exit 1; } \
-		&& printf "  $(GREEN)✓ tmux plugins installed$(RESET)\n"; \
-	else \
+	# tpm is machine-local (not stowed). The `run '.../tpm'` line in
+	# tmux.conf auto-installs the configured plugins on first tmux
+	# start, so the Makefile only needs tpm itself to be present.
+	@mkdir -p "$$HOME/.config/tmux/plugins"; \
+	if [ ! -d "$$HOME/.config/tmux/plugins/tpm" ]; then \
 		git clone --quiet https://github.com/tmux-plugins/tpm \
-			~/.config/tmux/plugins/tpm \
-			&& ~/.config/tmux/plugins/tpm/bindings/install_plugins >/dev/null \
-			|| { $(call fail,tmux plugin install failed); exit 1; } \
-		&& printf "  $(GREEN)✓ tmux plugins installed (tpm cloned)$(RESET)\n"; \
+			"$$HOME/.config/tmux/plugins/tpm" \
+			&& printf "  $(GREEN)✓ tpm cloned — plugins auto-install on first tmux start$(RESET)\n"; \
+	else \
+		echo "  tpm already present — plugins auto-install on first tmux start"; \
 	fi
 	@cp --update=none "$$PWD/config/zsh/.config/zsh/.zshrc_local.example" \
 		~/.config/zsh/.zshrc_local \
@@ -163,6 +163,7 @@ HISTORY_TIP := old shell history at ~/.zsh_history — one-time: atuin import zs
 
 ZSHRC_TIP := .zshrc_local is still the template — review it
 GITID_TIP := git identity still the placeholder — set user.name/email in ~/.gitconfig_local
+TMUX_TIP := start tmux once so tpm can install the configured plugins
 
 tips:
 	@if [ -s "$$HOME/.zsh_history" ]; then \
@@ -175,6 +176,12 @@ tips:
 	@if [ -f "$$HOME/.gitconfig_local" ] && \
 		grep -q "you@example.com" "$$HOME/.gitconfig_local"; then \
 		printf "  $(YELLOW)▲ $(GITID_TIP)$(RESET)\n"; \
+	fi
+	@NP=$$(grep -cE "@plugin[[:space:]]+'" "$$HOME/.config/tmux/tmux.conf" 2>/dev/null); \
+	ND=$$(find "$$HOME/.config/tmux/plugins" -mindepth 1 -maxdepth 1 \
+		-type d 2>/dev/null | wc -l); \
+	if [ -n "$$NP" ] && [ "$$ND" -lt "$$NP" ]; then \
+		printf "  $(YELLOW)▲ $(TMUX_TIP)$(RESET)\n"; \
 	fi
 
 install: install-deps install-nix install-dotfiles tips
