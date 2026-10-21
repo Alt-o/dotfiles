@@ -149,14 +149,20 @@ install-dotfiles:
 	@# target that is still a real (non-symlink) file. git ls-files
 	@# (not find) so untracked leftovers in the repo tree — e.g. a
 	@# stale tpm clone from when it was a submodule — are never
-	@# treated as stow targets. Re-runs are safe: our own stow
-	@# symlinks are left in place.
+	@# treated as stow targets. The readlink guard skips targets
+	@# that resolve into the stow root: when stow stows a whole
+	@# directory as one symlink, the target path IS the source
+	@# file, and backing it up would delete tracked files. Re-runs
+	@# are safe: our own stow symlinks are left in place.
 	@for f in $$(git ls-files config | \
 		grep -vE '\.example$$|^config/\.stowrc$$'); do \
 		t="$$HOME/$${f#config/*/}"; \
 		if [ -e "$$t" ] && [ ! -L "$$t" ]; then \
-			mv "$$t" "$$t.stow-backup" \
-			&& echo "  backed up $$t -> $$t.stow-backup"; \
+			case "$$(readlink -f "$$t")" in \
+				"$$(pwd)/config"/*) ;; \
+				*) mv "$$t" "$$t.stow-backup" \
+					&& echo "  backed up $$t -> $$t.stow-backup";; \
+			esac; \
 		fi; \
 	done
 	@cd config && $(STOW) * \
