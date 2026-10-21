@@ -99,21 +99,22 @@ install-nix:
 			|| { $(call fail,CLI tool set install failed); exit 1; } \
 		&& printf "  $(GREEN)✓ CLI tool set installed via nix profile$(RESET)\n"; \
 	fi
-	# Login shell: the dotfiles assume zsh, and base images (e.g.
-	# WSL) may not ship it. chsh needs the path in /etc/shells;
-	# regular chsh prompts for a password, so use passwordless
-	# sudo when available (WSL), otherwise print the manual steps.
-	@NIX=$$(command -v nix 2>/dev/null || echo "$$HOME/.nix-profile/bin/nix"); \
-	ZSH=$$(command -v zsh 2>/dev/null || echo "$$HOME/.local/bin/zsh"); \
+	@# Login shell: the dotfiles assume zsh; base images (e.g. WSL)
+	@# may not ship it. Resolve it from PATH or the nix profile,
+	@# register it in /etc/shells, and set it via passwordless
+	@# sudo chsh when available (WSL); otherwise print manual steps.
+	@ZSH=$$(command -v zsh 2>/dev/null || \
+		echo "$$HOME/.nix-profile/bin/zsh"); \
 	if [ ! -x "$$ZSH" ]; then \
-		printf "  $(YELLOW)▲ zsh not on PATH yet — open a new shell,\n" \
-		"  then: echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH\n"; \
+		printf "  $(YELLOW)▲ zsh not found (PATH or ~/.nix-profile/bin).\n" \
+		"  Once the nix CLI set is in, set it manually:\n" \
+		"  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH$(RESET)\n"; \
 	elif readlink -f "$$SHELL" | grep -q '/zsh'; then \
 		echo "  login shell is already zsh"; \
 	elif sudo -n sh -c "grep -qxF '$$ZSH' /etc/shells || \
 		echo '$$ZSH' >> /etc/shells" 2>/dev/null \
-		&& sudo -n chsh -s "$$ZSH" "$$USER" 2>/dev/null; then \
-		printf "  $(GREEN)✓ login shell set to zsh$(RESET)\n"; \
+		&& sudo -n chsh -s "$$ZSH" "$$(id -un)" 2>/dev/null; then \
+		printf "  $(GREEN)✓ login shell set to $$ZSH$(RESET)\n"; \
 	else \
 		printf "  $(YELLOW)▲ set your login shell manually:\n" \
 		"  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH$(RESET)\n"; \
@@ -144,12 +145,12 @@ install-dotfiles:
 	@git submodule update --init --recursive \
 		|| { $(call fail,submodule update failed); exit 1; }
 	$(call ok,submodules up to date)
-	# stow refuses to symlink over existing files: back up any stow
-	# target that is still a real (non-symlink) file. git ls-files
-	# (not find) so untracked leftovers in the repo tree — e.g. a
-	# stale tpm clone from when it was a submodule — are never
-	# treated as stow targets. Re-runs are safe: our own stow
-	# symlinks are left in place.
+	@# stow refuses to symlink over existing files: back up any stow
+	@# target that is still a real (non-symlink) file. git ls-files
+	@# (not find) so untracked leftovers in the repo tree — e.g. a
+	@# stale tpm clone from when it was a submodule — are never
+	@# treated as stow targets. Re-runs are safe: our own stow
+	@# symlinks are left in place.
 	@for f in $$(git ls-files config | \
 		grep -vE '\.example$$|^config/\.stowrc$$'); do \
 		t="$$HOME/$${f#config/*/}"; \
@@ -161,9 +162,9 @@ install-dotfiles:
 	@cd config && $(STOW) * \
 		|| { $(call fail,stow failed); exit 1; }
 	$(call ok,all packages stowed into ~/)
-	# tpm is machine-local (not stowed). The `run '.../tpm'` line in
-	# tmux.conf auto-installs the configured plugins on first tmux
-	# start, so the Makefile only needs tpm itself to be present.
+	@# tpm is machine-local (not stowed). The `run '.../tpm'` line in
+	@# tmux.conf auto-installs the configured plugins on first tmux
+	@# start, so the Makefile only needs tpm itself to be present.
 	@mkdir -p "$$HOME/.config/tmux/plugins"; \
 	if [ ! -d "$$HOME/.config/tmux/plugins/tpm" ]; then \
 		git clone --quiet https://github.com/tmux-plugins/tpm \
