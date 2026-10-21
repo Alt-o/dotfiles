@@ -89,7 +89,8 @@ install-nix:
 	if [ ! -x "$$NIX" ]; then \
 		$(call fail,nix not found — open a new shell and re-run); exit 1; \
 	fi; \
-	if "$$NIX" $(NIX_FLAGS) profile list | grep -qE 'Flake attribute:.*\.cli'; then \
+	if "$$NIX" $(NIX_FLAGS) profile list | \
+		grep -qE 'Flake attribute:.*\.cli'; then \
 		"$$NIX" $(NIX_FLAGS) profile upgrade cli \
 			|| { $(call fail,CLI tool set upgrade failed); exit 1; } \
 		&& printf "  $(GREEN)✓ CLI tool set upgraded$(RESET)\n"; \
@@ -127,7 +128,8 @@ install-apps:
 	if [ ! -x "$$NIX" ]; then \
 		$(call fail,nix not found — run `make install` first); exit 1; \
 	fi; \
-	if "$$NIX" $(NIX_FLAGS) profile list | grep -qE 'Flake attribute:.*\.apps'; then \
+	if "$$NIX" $(NIX_FLAGS) profile list | \
+		grep -qE 'Flake attribute:.*\.apps'; then \
 		"$$NIX" $(NIX_FLAGS) profile upgrade apps \
 			|| { $(call fail,GUI apps upgrade failed); exit 1; } \
 		&& printf "  $(GREEN)✓ GUI apps upgraded$(RESET)\n"; \
@@ -162,7 +164,8 @@ install-dotfiles:
 	if [ ! -d "$$HOME/.config/tmux/plugins/tpm" ]; then \
 		git clone --quiet https://github.com/tmux-plugins/tpm \
 			"$$HOME/.config/tmux/plugins/tpm" \
-			&& printf "  $(GREEN)✓ tpm cloned — plugins auto-install on first tmux start$(RESET)\n"; \
+			&& printf "  $(GREEN)✓ tpm cloned — plugins auto-install\n" \
+			"on first tmux start$(RESET)\n"; \
 	else \
 		echo "  tpm already present — plugins auto-install on first tmux start"; \
 	fi
@@ -178,10 +181,10 @@ install-dotfiles:
 # --- Tips ----------------------------------------------------------------------
 # Advisory notes, printed at the end of `install`. Each is guarded so
 # re-runs stay quiet. New tips go here.
-HISTORY_TIP := old shell history at ~/.zsh_history — one-time: atuin import zsh
+HISTORY_TIP := old history at ~/.zsh_history — one-time: atuin import zsh
 
 ZSHRC_TIP := .zshrc_local is still the template — review it
-GITID_TIP := git identity still the placeholder — set user.name/email in ~/.gitconfig_local
+GITID_TIP := set user.name/email in ~/.gitconfig_local (still placeholder)
 TMUX_TIP := start tmux once so tpm can install the configured plugins
 
 tips:
@@ -196,7 +199,8 @@ tips:
 		grep -q "you@example.com" "$$HOME/.gitconfig_local"; then \
 		printf "  $(YELLOW)▲ $(GITID_TIP)$(RESET)\n"; \
 	fi
-	@NP=$$(grep -cE "@plugin[[:space:]]+'" "$$HOME/.config/tmux/tmux.conf" 2>/dev/null); \
+	@NP=$$(grep -cE "@plugin[[:space:]]+'" \
+		"$$HOME/.config/tmux/tmux.conf" 2>/dev/null); \
 	ND=$$(find "$$HOME/.config/tmux/plugins" -mindepth 1 -maxdepth 1 \
 		-type d 2>/dev/null | wc -l); \
 	if [ -n "$$NP" ] && [ "$$ND" -lt "$$NP" ]; then \
