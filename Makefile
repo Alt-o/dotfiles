@@ -70,21 +70,31 @@ install-deps:
 		&& printf "  $(GREEN)✓ Nerd Fonts installed$(RESET)\n"; \
 	fi
 
+# First-run nix install: the installer writes its PATH hook into shell
+# profiles only, so within this make run the binary is found via the
+# fixed ~/.nix-profile location (see NIX resolution below). Its
+# banner output is silenced on success; stderr still surfaces.
 install-nix:
 	$(call banner,2/3,Nix + flake CLI tool set)
 	@if command -v nix >/dev/null; then \
 		echo "  nix already installed — skipping installer"; \
+	elif [ -x ~/.nix-profile/bin/nix ]; then \
+		echo "  nix installed (not on this shell's PATH) — skipping installer"; \
 	else \
-		$(CURL) https://nixos.org/nix/install | sh -s -- --daemon \
+		$(CURL) https://nixos.org/nix/install | sh -s -- --daemon >/dev/null \
 			|| { $(call fail,nix installer failed); exit 1; } \
 		&& printf "  $(GREEN)✓ nix installed (multi-user, daemon)$(RESET)\n"; \
 	fi
-	@if nix $(NIX_FLAGS) profile list | grep -qE 'Flake attribute:.*\.cli'; then \
-		nix $(NIX_FLAGS) profile upgrade cli \
+	@NIX=$$(command -v nix 2>/dev/null || echo "$$HOME/.nix-profile/bin/nix"); \
+	if [ ! -x "$$NIX" ]; then \
+		$(call fail,nix not found — open a new shell and re-run); exit 1; \
+	fi; \
+	if "$$NIX" $(NIX_FLAGS) profile list | grep -qE 'Flake attribute:.*\.cli'; then \
+		"$$NIX" $(NIX_FLAGS) profile upgrade cli \
 			|| { $(call fail,CLI tool set upgrade failed); exit 1; } \
 		&& printf "  $(GREEN)✓ CLI tool set upgraded$(RESET)\n"; \
 	else \
-		nix $(NIX_FLAGS) profile add .#cli \
+		"$$NIX" $(NIX_FLAGS) profile add .#cli \
 			|| { $(call fail,CLI tool set install failed); exit 1; } \
 		&& printf "  $(GREEN)✓ CLI tool set installed via nix profile$(RESET)\n"; \
 	fi
@@ -94,15 +104,16 @@ install-nix:
 # install-nix — upgrades the dot-apps profile when it exists.
 install-apps:
 	$(call banner,+,GUI apps (desktop machines))
-	@if ! command -v nix >/dev/null; then \
+	@NIX=$$(command -v nix 2>/dev/null || echo "$$HOME/.nix-profile/bin/nix"); \
+	if [ ! -x "$$NIX" ]; then \
 		$(call fail,nix not found — run `make install` first); exit 1; \
-	fi
-	@if nix $(NIX_FLAGS) profile list | grep -qE 'Flake attribute:.*\.apps'; then \
-		nix $(NIX_FLAGS) profile upgrade apps \
+	fi; \
+	if "$$NIX" $(NIX_FLAGS) profile list | grep -qE 'Flake attribute:.*\.apps'; then \
+		"$$NIX" $(NIX_FLAGS) profile upgrade apps \
 			|| { $(call fail,GUI apps upgrade failed); exit 1; } \
 		&& printf "  $(GREEN)✓ GUI apps upgraded$(RESET)\n"; \
 	else \
-		nix $(NIX_FLAGS) profile add .#apps \
+		"$$NIX" $(NIX_FLAGS) profile add .#apps \
 			|| { $(call fail,GUI apps install failed); exit 1; } \
 		&& printf "  $(GREEN)✓ GUI apps installed via nix profile$(RESET)\n"; \
 	fi
