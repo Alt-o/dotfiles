@@ -123,9 +123,16 @@ install-dotfiles:
 	@git submodule update --init --recursive \
 		|| { $(call fail,submodule update failed); exit 1; }
 	$(call ok,submodules up to date)
-	@if [ -e ~/.zshrc ] && [ ! -L ~/.zshrc ]; then \
-		mv ~/.zshrc ~/.zshrc.backup; \
-		echo "  backed up existing ~/.zshrc to ~/.zshrc.backup"; fi
+	# stow refuses to symlink over existing files: back up any stow
+	# target that is still a real (non-symlink) file. Re-runs are
+	# safe — our own stow symlinks are left in place.
+	@for f in $$(find config -type f -not -name '*.example'); do \
+		t="$$HOME/$${f#config/*/}"; \
+		if [ -e "$$t" ] && [ ! -L "$$t" ]; then \
+			mv "$$t" "$$t.stow-backup" \
+			&& echo "  backed up $$t -> $$t.stow-backup"; \
+		fi; \
+	done
 	@cd config && $(STOW) * \
 		|| { $(call fail,stow failed); exit 1; }
 	$(call ok,all packages stowed into ~/)
