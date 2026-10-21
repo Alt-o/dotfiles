@@ -98,6 +98,25 @@ install-nix:
 			|| { $(call fail,CLI tool set install failed); exit 1; } \
 		&& printf "  $(GREEN)✓ CLI tool set installed via nix profile$(RESET)\n"; \
 	fi
+	# Login shell: the dotfiles assume zsh, and base images (e.g.
+	# WSL) may not ship it. chsh needs the path in /etc/shells;
+	# regular chsh prompts for a password, so use passwordless
+	# sudo when available (WSL), otherwise print the manual steps.
+	@NIX=$$(command -v nix 2>/dev/null || echo "$$HOME/.nix-profile/bin/nix"); \
+	ZSH=$$(command -v zsh 2>/dev/null || echo "$$HOME/.local/bin/zsh"); \
+	if [ ! -x "$$ZSH" ]; then \
+		printf "  $(YELLOW)▲ zsh not on PATH yet — open a new shell,\n" \
+		"  then: echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH\n"; \
+	elif readlink -f "$$SHELL" | grep -q '/zsh'; then \
+		echo "  login shell is already zsh"; \
+	elif sudo -n sh -c "grep -qxF '$$ZSH' /etc/shells || \
+		echo '$$ZSH' >> /etc/shells" 2>/dev/null \
+		&& sudo -n chsh -s "$$ZSH" "$$USER" 2>/dev/null; then \
+		printf "  $(GREEN)✓ login shell set to zsh$(RESET)\n"; \
+	else \
+		printf "  $(YELLOW)▲ set your login shell manually:\n" \
+		"  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH$(RESET)\n"; \
+	fi
 
 # GUI apps from the flake (firefox, element-desktop). Desktop machines
 # only: run as part of `install-full` or standalone. Idempotent, like

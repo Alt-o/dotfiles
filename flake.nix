@@ -22,6 +22,7 @@
           stow                # symlink-based dotfile installer
           television          # channel-based fuzzy finder (tv)
           tmux                # terminal multiplexer
+          zsh                 # login shell (not on all base images, e.g. WSL)
           # File & code navigation
           bat                 # cat with syntax highlighting
           eza                 # ls/tree with icons
