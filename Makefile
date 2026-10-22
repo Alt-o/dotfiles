@@ -154,12 +154,21 @@ install-dotfiles:
 	@# treated as stow targets. The readlink guard skips targets
 	@# that resolve into the stow root: when stow stows a whole
 	@# directory as one symlink, the target path IS the source
-	@# file, and backing it up would delete tracked files. Re-runs
-	@# are safe: our own stow symlinks are left in place.
+	@# file, and backing it up would delete tracked files. Dangling
+	@# links are stale leftovers (e.g. the repo moved): stow links
+	@# each config package as one directory symlink (e.g. 
+	@# ~/.config/zsh), so those package dirs are checked too, and
+	@# any dangling link is removed. Live foreign links are left
+	@# for stow's conflict warning to name. Re-runs are safe: our
+	@# own stow symlinks are left in place.
 	@for f in $$(git ls-files config | \
 		grep -vE '\.example$$|^config/\.stowrc$$'); do \
 		t="$$HOME/$${f#config/*/}"; \
-		if [ -e "$$t" ] && [ ! -L "$$t" ]; then \
+		if [ -L "$$t" ]; then \
+			if [ ! -e "$$t" ]; then \
+				rm -f "$$t" && echo "  removed dangling link $$t"; \
+			fi; \
+		elif [ -e "$$t" ]; then \
 			case "$$(readlink -f "$$t")" in \
 				"$$(pwd)/config"/*) ;; \
 				*) mv "$$t" "$$t.stow-backup" \
@@ -167,8 +176,43 @@ install-dotfiles:
 			esac; \
 		fi; \
 	done
-	@cd config && $(STOW) * \
-		|| { $(call fail,stow failed); exit 1; }
+	@# Stow links a package's .config dir (e.g. ~/.config/zsh) as a
+	@# single symlink; if the repo moved since, that link dangles
+	@# while the per-file targets above still "exist" through it,
+	@# so remove dangling package-dir links explicitly.
+	@for d in config/*/; do \
+		p="$$d"; p="$$p"; p="$${p#config/}"; p="$${p%/}"; \
+		if [ -d "$$d/.config" ]; then \
+			t="$$HOME/.config/$$p"; \
+			if [ -L "$$t" ] && [ ! -e "$$t" ]; then \
+				rm -f "$$t" && echo "  removed dangling link $$t"; \
+			fi; \
+		fi; \
+	done
+	@# stow exits non-zero on conflict, but older versions may skip
+	@# a package with only a WARNING line, so treat any warning as
+	@# failure too: a skipped package is a broken install.
+	@if ! out=$$(cd config && $(STOW) * 2>&1); then \
+		printf '%s\n' "$$out"; \
+		if printf '%s\n' "$$out" | grep -q '^WARNING'; then \
+			$(call fail,stow skipped packages due to conflicts); \
+		else \
+			$(call fail,stow failed); \
+		fi; \
+		echo "  for each target named above (relative to ~):"; \
+		echo "    ls -l <path>             # inspect what it is"; \
+		echo "    mv <path> <path>.keep    # move it aside (rm if dangling)"; \
+		echo "  then re-run: make install-dotfiles"; \
+		exit 1; \
+	fi; printf '%s\n' "$$out"; \
+	if printf '%s\n' "$$out" | grep -q '^WARNING'; then \
+		$(call fail,stow skipped packages due to conflicts); \
+		echo "  for each target named above (relative to ~):"; \
+		echo "    ls -l <path>             # inspect what it is"; \
+		echo "    mv <path> <path>.keep    # move it aside (rm if dangling)"; \
+		echo "  then re-run: make install-dotfiles"; \
+		exit 1; \
+	fi
 	$(call ok,all packages stowed into ~/)
 	@# tpm is machine-local (not stowed). The `run '.../tpm'` line in
 	@# tmux.conf auto-installs the configured plugins on first tmux
