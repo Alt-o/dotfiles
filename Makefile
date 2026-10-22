@@ -106,9 +106,9 @@ install-nix:
 	@ZSH=$$(command -v zsh 2>/dev/null || \
 		echo "$$HOME/.nix-profile/bin/zsh"); \
 	if [ ! -x "$$ZSH" ]; then \
-		$(call warn,zsh not found (PATH or ~/.nix-profile/bin).); \
+		echo "  $(YELLOW)▲ zsh not found (PATH or ~/.nix-profile/bin)."; \
 		echo "  Once the nix CLI set is in, set it manually:"; \
-		echo "  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH"; \
+		echo "  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH$(RESET)"; \
 	elif readlink -f "$$SHELL" | grep -q '/zsh'; then \
 		echo "  login shell is already zsh"; \
 	elif sudo -n sh -c "grep -qxF '$$ZSH' /etc/shells || \
@@ -116,8 +116,8 @@ install-nix:
 		&& sudo -n chsh -s "$$ZSH" "$$(id -un)" 2>/dev/null; then \
 		printf "  $(GREEN)✓ login shell set to $$ZSH$(RESET)\n"; \
 	else \
-		$(call warn,set your login shell manually:); \
-		echo "  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH"; \
+		echo "  $(YELLOW)▲ set your login shell manually:"; \
+		echo "  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH$(RESET)"; \
 	fi
 
 # GUI apps from the flake (firefox, element-desktop). Desktop machines
