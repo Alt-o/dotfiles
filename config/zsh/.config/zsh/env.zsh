@@ -9,8 +9,15 @@
 export XDG_CONFIG_HOME="$HOME/.config"
 
 ## --- Locale
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+# en_US.UTF-8 where the system ships it, otherwise C.UTF-8, which
+# always exists (fresh WSL installs generate no other locales).
+if locale -a 2>/dev/null | grep -qix 'en_US\.utf-\?8'; then
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+else
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+fi
 
 ## --- Editors
 export EDITOR=nvim
@@ -54,6 +61,15 @@ export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 export PATH="/usr/local/go/bin:$GOPATH/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.opencode/bin:$PATH"  # opencode agent
+
+## --- WSL interop
+# The PATH rebuild above drops the Windows paths WSL normally adds,
+# so re-append them (powershell.exe & co. become reachable again).
+# /mnt/c/Windows exists only on WSL; case-insensitive mounts make the
+# mixed-case names resolve. Appended last so Linux tools always win.
+if [[ -d /mnt/c/Windows ]]; then
+    export PATH="$PATH:/mnt/c/Windows/system32:/mnt/c/Windows/System32/WindowsPowerShell/v1.0"
+fi
 
 ## --- Nix
 # User-level config dir (stowed nix/nix.conf).
