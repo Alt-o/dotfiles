@@ -108,7 +108,8 @@ install-nix:
 	if [ ! -x "$$ZSH" ]; then \
 		echo "  $(YELLOW)▲ zsh not found (PATH or ~/.nix-profile/bin)."; \
 		echo "  Once the nix CLI set is in, set it manually:"; \
-		echo "  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH$(RESET)"; \
+		echo "  $(BOLD)echo $$ZSH | sudo tee -a /etc/shells\n"; \
+		echo "       && chsh -s $$ZSH$(RESET)"; \
 	elif readlink -f "$$SHELL" | grep -q '/zsh'; then \
 		echo "  login shell is already zsh"; \
 	elif sudo -n sh -c "grep -qxF '$$ZSH' /etc/shells || \
@@ -117,7 +118,8 @@ install-nix:
 		printf "  $(GREEN)✓ login shell set to $$ZSH$(RESET)\n"; \
 	else \
 		echo "  $(YELLOW)▲ set your login shell manually:"; \
-		echo "  echo $$ZSH | sudo tee -a /etc/shells && chsh -s $$ZSH$(RESET)"; \
+		echo "  $(BOLD)echo $$ZSH | sudo tee -a /etc/shells\n"; \
+		echo "       && chsh -s $$ZSH$(RESET)"; \
 	fi
 
 # GUI apps from the flake (firefox, element-desktop). Desktop machines
