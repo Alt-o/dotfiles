@@ -37,6 +37,7 @@
           # Review / output
           delta               # syntax-aware git diff pager
           jq                  # fast JSON processor
+          man                 # manual pages; buildEnv wrappers set MANPATH
           tldr                # community man pages (TLDR)
           # Build
           cmake               # build system generator
