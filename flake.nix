@@ -11,8 +11,9 @@
   in {
     packages = forAllSystems (pkgs: rec {
       # CLI / terminal tooling. Language runtimes (go, node, python)
-      # stay with mise; OS services (git, ssh, gpg, docker) stay with
-      # the distro.
+      # stay with mise; OS services (git, gpg, docker) stay with the
+      # distro. The ssh *client* is included here because a bare OS
+      # install may lack it.
       cli = pkgs.buildEnv {
         name = "dot-cli";
         paths = with pkgs; [
@@ -44,6 +45,7 @@
           cloc                # count lines of code by language
           httpie              # friendly HTTP client (curl alternative)
           iftop               # per-host bandwidth monitor
+          openssh             # ssh client + ssh-keygen
           mtr                 # traceroute + ping combined
           nmap                # network scanner
           shellcheck          # shell script linter
