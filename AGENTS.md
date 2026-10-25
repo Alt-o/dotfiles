@@ -64,7 +64,8 @@ the flake. `make install` must stay idempotent.
 ## State notes
 
 - Submodules: `zsh-autosuggestions`, `fzf-tab` (under
-  `config/zsh/.config/zsh/`).
+  `config/zsh/.config/zsh/`), `kickstart.nvim` (under
+  `config/nvim/.config/nvim/`, wrapped by a local `init.lua`).
 - Palette is Dracula everywhere (ghostty theme, starship, eza,
   completion, tmux cursor). New colors must fit it.
 - `~/.zsh_history` is never committed; history lives in atuin.

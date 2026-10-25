@@ -4,3 +4,6 @@
 [submodule "config/zsh/.config/zsh/fzf-tab"]
 	path = config/zsh/.config/zsh/fzf-tab
 	url = https://github.com/Aloxaf/fzf-tab
+[submodule "config/nvim/.config/nvim/kickstart"]
+	path = config/nvim/.config/nvim/kickstart
+	url = https://github.com/nvim-lua/kickstart.nvim
