@@ -61,13 +61,21 @@ install-deps:
 	$(call banner,1/3,Nerd Fonts)
 	@$(CURL) $(FONT_URL) -o /tmp/nerd-fonts.sh && chmod u+x /tmp/nerd-fonts.sh \
 		|| { $(call fail,Nerd Fonts installer download failed); exit 1; }
+	@# f stays empty for "n" below: no arg means the script
+	@# prints its selection menu instead of installing a default.
 	@if [ -d ~/.local/share/fonts/NerdFonts ] && \
 		[ -n "$$(ls -A ~/.local/share/fonts/NerdFonts 2>/dev/null)" ]; then \
 		echo "  Nerd Fonts already installed — skipping"; \
 	else \
-		/tmp/nerd-fonts.sh install all \
+		printf "  install the default font (JetBrainsMono)? [Y/n] "; \
+		read -r ans || ans=""; \
+		if [ "$$ans" != "n" ] && [ "$$ans" != "N" ]; then \
+			f=JetBrainsMono; \
+		fi; \
+		/tmp/nerd-fonts.sh install $$f \
 			|| { $(call fail,Nerd Fonts install failed); exit 1; } \
-		&& printf "  $(GREEN)✓ Nerd Fonts installed$(RESET)\n"; \
+		&& printf "  $(GREEN)✓ Nerd Fonts installed$(RESET)\n" \
+		&& printf "  $(YELLOW)▲ don't forget: if you picked another font,\n    set font-family in ~/.config/ghostty/config.ghostty to match$(RESET)\n"; \
 	fi
 
 # First-run nix install: the installer writes its PATH hook into shell

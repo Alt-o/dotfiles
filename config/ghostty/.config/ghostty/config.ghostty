@@ -11,7 +11,8 @@
 # menu) are all Dracula too, so they match.
 theme = Dracula
 
-# Nerd font so starship/eza glyphs render.
+# Nerd font so starship/eza glyphs render. Must match the font
+# you picked in `make install-deps` (JetBrainsMono here).
 font-family = "JetBrainsMono Nerd Font"
 
 # Dracula purple (#bd93f9) for the focused cursor; the unfocused

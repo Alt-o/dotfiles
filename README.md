@@ -12,7 +12,7 @@ make install-full   # desktop: base + GUI apps (firefox, element)
 
 `make install` runs, in order:
 
-1. `install-deps` — Nerd Fonts (curl installer)
+1. `install-deps` — Nerd Fonts (curl installer, prompts which font)
 
    (not sure which font to use? try the picker at
    https://www.codingfont.com/)
