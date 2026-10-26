@@ -13,6 +13,9 @@ make install-full   # desktop: base + GUI apps (firefox, element)
 `make install` runs, in order:
 
 1. `install-deps` — Nerd Fonts (curl installer)
+
+   (not sure which font to use? try the picker at
+   https://www.codingfont.com/)
 2. `install-nix` — nix then the CLI tool set from `flake.nix`
    (`nix profile add .#cli`, includes stow)
 3. `install-dotfiles` — submodules, `stow`, tmux plugins
