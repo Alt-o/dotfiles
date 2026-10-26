@@ -31,12 +31,31 @@ do
   -- local preference.
   vim.o.relativenumber = true
 
-  -- Palette: Dracula everywhere (repo-wide convention). Kickstart
-  -- installs and loads tokyonight inside its own init; load dracula
-  -- right after so the final look is Dracula without touching the
-  -- upstream file.
+  -- Soft column ruler at 85: wide enough for most prose and code,
+  -- still keeps wrapped lines under the typical 80-col terminal row.
+  -- (String: the option is a comma-separated column list.)
+  vim.o.colorcolumn = '85'
+
+  -- Indentation: spaces, 4-wide — the Python/PEP-8 standard.
+  -- (kickstart ships tabs off with 2-space indent; no per-language
+  -- overrides, keep one simple rule.)
+  vim.o.expandtab = true
+  vim.o.shiftwidth = 4
+  vim.o.tabstop = 4
+
+  -- Spell-check by default (toggle per-buffer with :set nospell).
+  vim.o.spell = true
+
+  -- Palette: blueberry, a local colorscheme module (lua/colors/
+  -- blueberry.lua, no plugin to install). Required directly after the
+  -- base config so it overrides kickstart's own theme without
+  -- touching the upstream file. Dracula stays the repo-wide palette
+  -- outside the editor and is kept installed here as a fallback:
+  -- `:colorscheme dracula` switches to it, `:colorscheme blueberry`
+  -- ... doesn't — the local one has no colors/ entry, so reload it
+  -- with `:source $MYVIMRC` or just restart.
   vim.pack.add { gh 'dracula/vim' }
-  vim.cmd.colorscheme 'dracula'
+  require('colors.blueberry')
 
   -- Quick visual jumps: `s` marks words ahead, `S` marks treesitter
   -- nodes behind; type the label to jump. Pairs with telescope for
