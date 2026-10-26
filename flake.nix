@@ -57,7 +57,8 @@
           uv                  # fast Python package/project manager
           yq                  # YAML/JSON processor
           # Editor + its file previews (yazi)
-          neovim              # editor
+          neovim                # editor
+          tree-sitter           # parser CLI (nvim-treesitter build step)
           imagemagick         # image preview (magick)
           poppler             # PDF preview (pdftoppm)
           resvg               # SVG preview (rsvg-convert)
