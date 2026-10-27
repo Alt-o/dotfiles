@@ -51,6 +51,8 @@
           nmap                # network scanner
           shellcheck          # shell script linter
           # Misc dev
+          btop                # interactive system monitor (CPU/mem/disk)
+          ctop                # container monitor (docker/nerdctl/podman)
           gita                # git repo manager (bulk operations)
           htop                # interactive process viewer
           just                # command runner (make replacement)
