@@ -1,0 +1,29 @@
+nerdfont: true
+worktree_dir: .worktrees
+mode: window # window/session
+window_prefix: "{project}-"
+agent: "pi"
+window_placement: after_current
+merge_strategy: rebase
+merge_keep: true
+
+dashboard:
+  close_on_jump: true
+
+panes:
+  - command: <agent>
+    focus: true
+  - split: horizontal
+
+# Shared by the dashboard and sidebar; defaults to one hour.
+stale_after: 5h # integer seconds or a duration such as 90m or 5h
+
+sidebar:
+  position: left
+  width: 30
+  layout: tiles
+  enter_action: focus
+  dim_stale: true
+  sort: recency
+  group_by: project
+  collapse_stale: true
