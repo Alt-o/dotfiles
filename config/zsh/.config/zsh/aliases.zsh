@@ -31,6 +31,9 @@ alias ltree='eza --tree --level=2 --icons --git'
 ## --- Misc
 alias cat=bat
 alias e='nvim'
+alias v='nvim'
+alias vim='nvim'
 alias python='python3'
 alias sl='ls'  # classic typo catcher
 alias src='cd ~/src'
+alias wm='workmux'
