@@ -1,10 +1,11 @@
 -- blueberry: a homemade colorscheme for Neovim.
 --
 -- A complete colorscheme in the modern sense: it clears all
--- highlights (hi clear), defines the classic groups, tree-sitter
--- captures and the plugin-specific groups used by this config
--- (lualine, telescope, fidget, gitsigns, notify), and sets
--- vim.g.colors_name. Loaded from init.lua via require — no
+-- highlights (hi clear), defines the classic groups, the spell
+-- and LSP-diagnostic groups, tree-sitter captures and the
+-- plugin-specific groups used by this config (lualine, telescope,
+-- fidget, gitsigns, notify), and sets vim.g.colors_name. Loaded
+-- from init.lua via require — no
 -- colors/ entry point needed.
 --
 -- Palette: deep indigo background, periwinkle text, magenta
@@ -49,6 +50,7 @@ local palette = {
   boolean = '#808bed',
   special = '#c080d0',
   underlined = '#df9f2d',
+  red = '#ff8b8b',
   directory = '#00ff8b',
   nontext = '#8b8bcd',
   todo = '#fafdff',
@@ -111,6 +113,21 @@ local hl = {
   ErrorMsg = { fg = '#ffffff', bg = palette.bg_warn },
   WarningMsg = { fg = '#ffffff', bg = palette.bg_warn },
   Question = { fg = palette.question },
+
+  -- spell check (builtin defaults are pale pastels, near invisible
+  -- on the deep indigo bg; one vivid squiggle color per error type)
+  SpellBad = { undercurl = true, sp = palette.red },
+  SpellCap = { undercurl = true, sp = palette.question },
+  SpellLocal = { undercurl = true, sp = palette.green },
+  SpellRare = { undercurl = true, sp = palette.preproc },
+
+  -- LSP diagnostic underlines (new vim.diagnostic API group names;
+  -- left undefined after hi clear they'd inherit Normal's fg)
+  DiagnosticUnderlineError = { undercurl = true, sp = palette.red },
+  DiagnosticUnderlineWarn = { undercurl = true, sp = palette.question },
+  DiagnosticUnderlineInfo = { undercurl = true, sp = palette.boolean },
+  DiagnosticUnderlineHint = { undercurl = true, sp = palette.preproc },
+
   ModeMsg = { fg = palette.nontext },
   MoreMsg = { fg = palette.nontext },
   Cursor = { fg = palette.text_match, bg = palette.bg_cursor },
@@ -239,7 +256,7 @@ local plugins = {
   -- gitsigns (git +/- markers in the sign column)
   GitSignsAdd = { fg = palette.directory },
   GitSignsChange = { fg = palette.number },
-  GitSignsDelete = { fg = '#ff8b8b' },
+  GitSignsDelete = { fg = palette.red },
 
   -- notify
   NotifyError = { fg = '#ffffff', bg = palette.bg_error },
@@ -257,6 +274,8 @@ local function apply(group, attrs)
     italic = attrs.italic and true or nil,
     bold = attrs.bold and true or nil,
     underline = attrs.underline and true or nil,
+    undercurl = attrs.undercurl and true or nil,
+    sp = attrs.sp,
   })
 end
 
