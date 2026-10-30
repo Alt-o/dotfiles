@@ -63,9 +63,11 @@ the flake. `make install` must stay idempotent.
 
 ## State notes
 
-- Submodules: `zsh-autosuggestions`, `fzf-tab` (under
+- Submodules: `zsh-autosuggestions`, `fzf-tab`, `forgit` (under
   `config/zsh/.config/zsh/`), `kickstart.nvim` (under
   `config/nvim/.config/nvim/`, wrapped by a local `init.lua`).
+- forgit (fzf-powered interactive git) is sourced from
+  `plugins.zsh`; its g* aliases can be renamed via `forgit_*` env vars.
 - Palette is Dracula in the shell chrome (ghostty theme, starship,
   eza, completion, tmux cursor); nvim and delta/bat use the custom
   blueberry palette. New colors must fit the relevant palette.

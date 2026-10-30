@@ -63,6 +63,12 @@ fi
 # Resulting pickers: ^T file, Esc-c directory, ^R atuin, ^I fzf-tab
 # menu.
 
+## --- forgit (git submodule next to this file)
+# fzf-powered interactive git pickers: g* aliases (ga, glo, gcb, gss,
+# gwt, ...). Rename or disable any alias via forgit_* env vars
+# (e.g. forgit_log='mylog', FORGIT_NO_ALIASES=1).
+source "$ZSHRC_DIR/forgit/forgit.plugin.zsh"
+
 ## --- pnpm (better npm)
 export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in

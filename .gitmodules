@@ -7,3 +7,6 @@
 [submodule "config/nvim/.config/nvim/kickstart"]
 	path = config/nvim/.config/nvim/kickstart
 	url = https://github.com/nvim-lua/kickstart.nvim
+[submodule "config/zsh/.config/zsh/forgit"]
+	path = config/zsh/.config/zsh/forgit
+	url = https://github.com/wfxr/forgit.git
