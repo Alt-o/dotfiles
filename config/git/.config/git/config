@@ -1,0 +1,69 @@
+# ============================================================================
+# .config/git/config — git XDG global config (portable).
+#
+# Stowed to ~/.config/git/config (git reads it next to ~/.gitconfig, at
+# the same global level; it takes precedence over ~/.gitconfig).
+# Owns the entire delta configuration so the main .gitconfig stays lean.
+# ============================================================================
+
+## --- Delta (pager for git diff/log/show)
+[delta]
+    dark = true
+    navigate = true
+    side-by-side = true
+    line-numbers = true
+    # blueberry feature (colors below; syntax theme: stowed
+    # ~/.config/bat/themes/Blueberry.tmTheme, read via the bat asset
+    # cache — rebuilt by `make install-dotfiles`)
+    features = blueberry
+    syntax-theme = Blueberry
+
+## --- Blueberry feature (adapted from lua/colors/blueberry.lua)
+## Hues from the nvim palette, lifted for >= 4.5:1 contrast on the
+## diff line backgrounds below.
+[delta "blueberry"]
+    # -- decorations (nontext indigo for chrome, keyword magenta for
+    #    emphasis, like the nvim StatusLine/Keyword groups)
+    file-style = "#978aed"
+    file-added-label = [+]
+    file-copied-label = [==]
+    file-modified-label = [*]
+    file-removed-label = [-]
+    file-renamed-label = [->]
+    file-decoration-style = "#c080d0 overline"
+    hunk-header-style = file line-number syntax
+    hunk-header-decoration-style = "#8b8bcd box"
+    hunk-header-file-style = "#ff8bff"
+    hunk-header-line-number-style = "#8b8bcd bold"
+    # -- git (blame bands walk bg -> bg_soft -> bg_mid, like LineNr
+    #    on bg_soft; separators match nontext)
+    blame-separator-format = "┊{n:>3}┊"
+    blame-separator-style = "#8b8bcd"
+    blame-palette = "#171721 #22172e #2e2e2e #3e3e5e #4e4e8f"
+    commit-style = "#ff8bff"
+    commit-decoration-style = "#8b8bcd box"
+    # -- grep
+    grep-file-style = "#ff8bff"
+    grep-line-number-style = "#8b8bcd"
+    # -- diff (line bgs are near-black tints of the DiffAdd/DiffDelete
+    #    hues so the Blueberry syntax palette keeps >= 4.5:1 contrast;
+    #    +/- markers inherit the terminal default fg on the tinted
+    #    bgs — delta has no separate marker style; line numbers use
+    #    modern bright green/red; emph words use the DiffAdd fg
+    #    #ffffcd bold, like the nvim diff groups)
+    keep-plus-minus-markers = true
+    line-numbers-left-style = "#8b8bcd"
+    line-numbers-right-style = "#8b8bcd"
+    line-numbers-zero-style = "#8b8bcd italic"
+    line-numbers-plus-style = "#7ee787 bold"
+    line-numbers-minus-style = "#ff7b72 bold"
+    line-numbers-left-format = "{nm:>1}┊"
+    line-numbers-right-format = " {np:>1}┊"
+    plus-style = "syntax #1b291d"
+    plus-emph-style = "#ffffcd bold"
+    plus-empty-line-marker-style = "syntax #1b291d"
+    minus-style = "syntax #2d1a1c"
+    minus-emph-style = "#ffffcd bold"
+    minus-empty-line-marker-style = "syntax #2d1a1c"
+    whitespace-error-style = "#ff8b8b reverse"
+    zero-style = syntax

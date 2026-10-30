@@ -1,7 +1,8 @@
 # ============================================================================
 # .gitconfig — global git configuration (portable).
 #
-# Stowed to ~/.gitconfig (single stow target: $HOME).
+# Stowed to ~/.gitconfig; the XDG config (~/.config/git/config,
+# stowed alongside) carries the delta configuration.
 # Machine/personal values (identity, sendemail, browser) live in
 # ~/.gitconfig_local, included below and NOT stored in this repo.
 # ============================================================================
@@ -29,13 +30,10 @@
     gpgsign = false
 
 ## --- Diff / merge
+# all delta config lives in the XDG git config (~/.config/git/config);
+# the delta pager binary comes from the flake.
 [interactive]
     diffFilter = delta --color-only
-[delta]
-    dark = true
-    navigate = true
-    side-by-side = true
-    line-numbers = true
 [merge]
     conflictStyle = zdiff3
 [diff]

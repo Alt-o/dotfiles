@@ -46,7 +46,8 @@ config/ghostty/.config/…         -> ~/.config/ghostty/…
 ```
 
 The Makefile runs `stow *` (every top-level dir is a package),
-installs the tmux plugins with TPM, and seeds `.zshrc_local`.
+installs the tmux plugins with TPM, rebuilds the bat theme cache
+(custom delta syntax theme), and seeds `.zshrc_local`.
 
 Machine/personal values never live in the repo: they go in
 `_local` files next to the stowed config (`~/.zshrc_local`,

@@ -222,6 +222,15 @@ install-dotfiles:
 		exit 1; \
 	fi
 	$(call ok,all packages stowed into ~/)
+	@# bat/delta load custom syntax themes only through bat's asset
+	@# cache (~/.cache/bat), so repack it now that the stowed
+	@# Blueberry.tmTheme is in place. A failure only costs the
+	@# custom theme (built-ins still work), so warn rather than abort.
+	@if command -v bat >/dev/null; then \
+		bat cache --build >/dev/null 2>&1 \
+			&& printf '  $(GREEN)✓ bat theme cache built$(RESET)\n' \
+			|| $(call warn,bat cache build failed — delta falls back to built-in themes); \
+	fi
 	@# tpm is machine-local (not stowed). The `run '.../tpm'` line in
 	@# tmux.conf auto-installs the configured plugins on first tmux
 	@# start, so the Makefile only needs tpm itself to be present.

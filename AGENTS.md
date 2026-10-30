@@ -66,7 +66,19 @@ the flake. `make install` must stay idempotent.
 - Submodules: `zsh-autosuggestions`, `fzf-tab` (under
   `config/zsh/.config/zsh/`), `kickstart.nvim` (under
   `config/nvim/.config/nvim/`, wrapped by a local `init.lua`).
-- Palette is Dracula everywhere (ghostty theme, starship, eza,
-  completion, tmux cursor). New colors must fit it.
+- Palette is Dracula in the shell chrome (ghostty theme, starship,
+  eza, completion, tmux cursor); nvim and delta/bat use the custom
+  blueberry palette. New colors must fit the relevant palette.
 - `~/.zsh_history` is never committed; history lives in atuin.
+- The bat asset cache (`~/.cache/bat`) is machine-local; `make
+  install-dotfiles` rebuilds it so bat/delta pick up the stowed
+  `Blueberry.tmTheme` (delta's syntax theme). All delta config
+  (incl. the blueberry feature) lives in the XDG git config
+  `config/git/.config/git/config` → `~/.config/git/config` (read
+  next to `~/.gitconfig`; delta/git2 resolves it natively, no
+  `[include]` needed). Hues are blueberry, lifted for >= 4.5:1
+  contrast on delta's diff line backgrounds (plus `#1b291d` /
+  minus `#2d1a1c`). Delta has no separate +/- marker style (the
+  prefix inherits the terminal fg), so line numbers carry the
+  green/red signal: `#7ee787` / `#ff7b72`.
 - `TODO.md` is machine-local and untracked.

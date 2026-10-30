@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Blueberry — custom syntect/bat theme for delta's syntax highlighting.
+
+  Hues are the blueberry palette from
+  config/nvim/.config/nvim/lua/colors/blueberry.lua, lifted toward
+  white where needed so every scope keeps >= 4.5:1 contrast on
+  delta's diff backgrounds (#1b291d added / #2d1a1c removed):
+  base #978aed->#9a8ded, comment #543a61->#9d8ea4, type
+  #963996->#ba7eba, preproc #409090->#589e9e. Remaining scopes are
+  1:1 with the nvim palette.
+
+  Both bat and delta read this file only after `bat cache --build`
+  has packed ~/.config/bat/themes/ into the ~/.cache/bat asset cache
+  (the Makefile runs this when stale). Delta has no built-in custom
+  theme support, so this cache is the only way to load it.
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Blueberry</string>
+  <key>settings</key>
+  <array>
+    <!-- base (Normal, Comment) -->
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>
+        <string>#171721</string>
+        <key>foreground</key>
+        <string>#9a8ded</string>
+        <key>caret</key>
+        <string>#8b8bff</string>
+        <key>lineHighlight</key>
+        <string>#22172e</string>
+        <key>selection</key>
+        <string>#4e4e8f</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#9d8ea4</string>
+        <key>fontStyle</key>
+        <string>italic</string>
+      </dict>
+    </dict>
+    <!-- keywords & statements (Keyword/Statement: magenta) -->
+    <dict>
+      <key>scope</key>
+      <string>keyword</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ff8bff</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>storage</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ff8bff</string>
+      </dict>
+    </dict>
+    <!-- preprocessor lines (PreProc/Include/Define: teal, lifted) -->
+    <dict>
+      <key>scope</key>
+      <string>meta.preprocessor</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#589e9e</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>entity.name.function.preprocessor</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#589e9e</string>
+      </dict>
+    </dict>
+    <!-- functions (Function: magenta, like Keyword) -->
+    <dict>
+      <key>scope</key>
+      <string>entity.name.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ff8bff</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>support.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ff8bff</string>
+      </dict>
+    </dict>
+    <!-- types (Type: purple, lifted for diff-banding contrast) -->
+    <dict>
+      <key>scope</key>
+      <string>storage.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ba7eba</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>support.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ba7eba</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>entity.name.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ba7eba</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>entity.other.inherited-class</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ba7eba</string>
+      </dict>
+    </dict>
+    <!-- strings (String/Character: warm constant) -->
+    <dict>
+      <key>scope</key>
+      <string>string</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ffcd8b</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>constant.character</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ffcd8b</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>constant.character.escape</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#c080d0</string>
+      </dict>
+    </dict>
+    <!-- numbers (Number/Float: orange) -->
+    <dict>
+      <key>scope</key>
+      <string>constant.numeric</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#f0ad6d</string>
+      </dict>
+    </dict>
+    <!-- booleans & literals (Boolean) -->
+    <dict>
+      <key>scope</key>
+      <string>constant.language</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#808bed</string>
+      </dict>
+    </dict>
+    <!-- other constants (Constant) -->
+    <dict>
+      <key>scope</key>
+      <string>support.constant</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ffcd8b</string>
+      </dict>
+    </dict>
+    <!-- variables & identifiers (TSVariable/TSIdentifier: periwinkle) -->
+    <dict>
+      <key>scope</key>
+      <string>variable</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#9a8ded</string>
+      </dict>
+    </dict>
+    <!-- special (Special/Delimiter/SpecialChar: orchid) -->
+    <dict>
+      <key>scope</key>
+      <string>support</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#c080d0</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>punctuation</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#b9b9b9</string>
+      </dict>
+    </dict>
+    <!-- git diff +/- markers: only seen when a diff has no file
+    syntax of its own (fallback to the plain Diff syntax) -->
+    <dict>
+      <key>scope</key>
+      <string>markup.inserted</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#7ee787</string>
+        <key>fontStyle</key>
+        <string>bold</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>markup.deleted</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ff7b72</string>
+        <key>fontStyle</key>
+        <string>bold</string>
+      </dict>
+    </dict>
+    <!-- errors (Error/SpellBad: red) -->
+    <dict>
+      <key>scope</key>
+      <string>invalid</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#ff8b8b</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>markup.underline</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#df9f2d</string>
+        <key>fontStyle</key>
+        <string>underline</string>
+      </dict>
+    </dict>
+    <!-- markdown (TSTitle/TSNote) -->
+    <dict>
+      <key>scope</key>
+      <string>markup.heading</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#eeeeee</string>
+        <key>fontStyle</key>
+        <string>bold</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>scope</key>
+      <string>markup.inline.raw</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#409090</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>
