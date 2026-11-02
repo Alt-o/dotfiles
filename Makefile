@@ -82,16 +82,30 @@ install-deps:
 # profiles only, so within this make run the binary is found via the
 # fixed ~/.nix-profile location (see NIX resolution below). Its
 # banner output is silenced on success; stderr still surfaces.
+# Mode: root + systemd -> multi-user daemon; containers (no systemd)
+# and non-root users -> single-user, no daemon.
 install-nix:
 	$(call banner,2/3,Nix + flake CLI tool set)
-	@if command -v nix >/dev/null; then \
+	@# Probe usability, not PATH presence: an image may ship a
+	@# root-owned /nix the workspace user cannot open (big-lock
+	@# permission denied). `nix profile list` opens the store db,
+	@# so it succeeds only for a store this user can actually use.
+	@if nix profile list >/dev/null 2>&1; then \
 		echo "  nix already installed — skipping installer"; \
+	elif command -v nix >/dev/null; then \
+		$(call fail,nix on PATH is unusable by $$(id -un) — image has a root-owned /nix; fix the image or chown it); exit 1; \
 	elif [ -x ~/.nix-profile/bin/nix ]; then \
 		echo "  nix installed (not on this shell's PATH) — skipping installer"; \
 	else \
-		$(CURL) https://nixos.org/nix/install | sh -s -- --daemon >/dev/null \
-			|| { $(call fail,nix installer failed); exit 1; } \
-		&& printf "  $(GREEN)✓ nix installed (multi-user, daemon)$(RESET)\n"; \
+		if [ "$$(id -u)" = 0 ] && [ -d /run/systemd/system ]; then \
+			$(CURL) https://nixos.org/nix/install | sh -s -- --daemon >/dev/null \
+				|| { $(call fail,nix installer failed); exit 1; } \
+			&& printf "  $(GREEN)✓ nix installed (multi-user, daemon)$(RESET)\n"; \
+		else \
+			$(CURL) https://nixos.org/nix/install | sh -s -- --no-daemon >/dev/null \
+				|| { $(call fail,nix installer failed); exit 1; } \
+			&& printf "  $(GREEN)✓ nix installed (single-user)$(RESET)\n"; \
+		fi; \
 	fi
 	@NIX=$$(command -v nix 2>/dev/null || echo "$$HOME/.nix-profile/bin/nix"); \
 	if [ ! -x "$$NIX" ]; then \
@@ -152,6 +166,14 @@ install-apps:
 
 install-dotfiles:
 	$(call banner,3/3,Dotfiles (stow) + local seed)
+	@# stow ships in the flake profile, but headless workspaces may
+	@# provide it from the distro instead — name the missing tool
+	@# explicitly instead of failing deep inside stow.
+	@if ! (export PATH="$HOME/.nix-profile/bin:$${PATH}"; \
+		command -v stow) >/dev/null 2>&1; then \
+		$(call fail,stow not found — run \`make install\` or provide stow); \
+		exit 1; \
+	fi
 	@git submodule update --init --recursive \
 		|| { $(call fail,submodule update failed); exit 1; }
 	$(call ok,submodules up to date)

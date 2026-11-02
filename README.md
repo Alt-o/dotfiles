@@ -26,6 +26,17 @@ Desktop machines run `make install-full` (= `install` +
 (`nix profile add .#apps`). Every target is idempotent — re-running
 upgrades the corresponding profile.
 
+## Headless hook
+
+`install.sh` (repo root) is the entry point for servers and remote
+workspaces. Run it by hand, or let a workspace provider execute it
+as the dotfiles setup script. It runs the full base install minus
+fonts (nothing headless renders them): `make install-nix`
+`install-dotfiles tips`. Prerequisite: make. If nix is missing it
+is installed single-user (containers have no systemd); an image
+that ships a root-owned `/nix` the user cannot open fails with a
+clear message instead.
+
 Everything tool-like — including stow itself — comes from the flake.
 
 ## Layout
