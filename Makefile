@@ -16,8 +16,9 @@ FONT_URL := \
 NIX_FLAGS := --extra-experimental-features "nix-command flakes"
 # stow ships in the flake profile. Prepend the profile bin to PATH so it
 # is found even in non-interactive make shells where the nix PATH hook
-# (the zshrc env block) has not run.
-STOW := env PATH="$HOME/.nix-profile/bin:$$PATH" stow
+# (the zshrc env block) has not run. $$HOME — a bare $HOME is swallowed
+# by make itself and expands to the bogus relative path "OME/...".
+STOW := env PATH="$$HOME/.nix-profile/bin:$$PATH" stow
 
 # --- Output -----------------------------------------------------------------
 ESC := \033
@@ -169,7 +170,7 @@ install-dotfiles:
 	@# stow ships in the flake profile, but headless workspaces may
 	@# provide it from the distro instead — name the missing tool
 	@# explicitly instead of failing deep inside stow.
-	@if ! (export PATH="$HOME/.nix-profile/bin:$${PATH}"; \
+	@if ! (export PATH="$$HOME/.nix-profile/bin:$${PATH}"; \
 		command -v stow) >/dev/null 2>&1; then \
 		$(call fail,stow not found — run \`make install\` or provide stow); \
 		exit 1; \
